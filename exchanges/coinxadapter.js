@@ -12,7 +12,7 @@ module.exports = (function() {
 
     // Constants
     var version         = '0.0.6',
-        API_URL  = 'https://x.tth365.com:443//api/v2',
+        API_URL  = 'https://x.tth365.com:443/api/v2',
         HASH_URL = '/api/v2',
         USER_AGENT      = 'coinx.js ' + version;
     var errorMsg = "Missing Params";
@@ -152,15 +152,20 @@ module.exports = (function() {
         },
 /////
         // Make a private API request GET
-        _privateGet: function(link,callback){
+        _privateGet: function(link, parameters, callback){
             var options;
             var url = "GET|"+HASH_URL+link+"|"
 
-           var parameters= {}
+            if (typeof parameters === 'function'){
+                callback = parameters;
+                parameters = {};
+            }
+
+            parameters || (parameters = {});
             parameters.access_key = Gkey
             parameters.tonce = parseInt(nonce()/100 );
 
-           var  paramString = Object.keys(parameters).sort(parameters).map(function(param){
+            var  paramString = Object.keys(parameters).sort(parameters).map(function(param){
                    return encodeURIComponent(param) + '=' + encodeURIComponent(parameters[param]);
                }).join('&');
 
@@ -171,6 +176,7 @@ module.exports = (function() {
                 method: 'GET',
                 url: API_URL+link+"?"+paramString
             };
+            console.log(options);
             return this._request(options, callback);
         },
 
@@ -264,7 +270,7 @@ module.exports = (function() {
             var url = "/members/me.json";
             return this._privateGet(url,{},callback);
         },
-         getAllDeposits : function(InCurrency,InLimit, InState,callback){
+        getAllDeposits : function(InCurrency,InLimit, InState,callback){
              if(!InCurrency)
                return callback(errorMsg,null)
              else {
@@ -316,7 +322,7 @@ module.exports = (function() {
             if(!orderId)
                return callback(errorMsg,null);
             var param = { id : orderId}
-            return this._privateGet("/orders.json",param, callback);
+            return this._privateGet("/order.json",param, callback);
         },
 
         myBalances: function(callback){
@@ -393,10 +399,10 @@ module.exports = (function() {
                 var param = {
                     side : mSide
                 }
-                return this._privatePost("orders/clear.json",param,callback);
+                return this._privatePost("/orders/clear.json",param,callback);
             }
             else{
-                return this._privatePost("orders/clear.json",{},callback);
+                return this._privatePost("/orders/clear.json",{},callback);
             }
         },
 
