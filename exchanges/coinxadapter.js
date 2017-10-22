@@ -95,7 +95,7 @@ module.exports = (function() {
                 if (!err && (typeof body === 'undefined' || body === null)){
                     err = 'Empty response';
                 }
-                callback(err, body);
+                callback(err, JSON.parse(body));  // FIXME: catch parse error
             });
             return this;
         },
@@ -323,17 +323,18 @@ module.exports = (function() {
         getRecentTrades : function(asset, currency, limit, timestamp, from, to, orderby, callback){
             if (!asset || !currency) {
               return  callback(errorMsg, null);
+            } else {
+                var params = {
+                    market:    joinCurrencies(asset, currency),
+                    limit:     limit ? limit : 50,
+                    timestamp: timestamp ? timestamp : null,
+                    from:      from ? from : null,
+                    to:        to ? to : null,
+                    order_by : orderby  ? orderby : "desc"
+                }
+                cleanUpParam(params);
+                return this._public("/trades.json", params, callback);
             }
-            var params = {
-                market:    joinCurrencies(asset, currency),
-                limit:     limit ? limit : 50,
-                timestamp: timestamp ? timestamp : null,
-                from:      from ? from : null,
-                to:        to ? to : null,
-                order_by : orderby  ? orderby : "desc"
-            }
-            cleanUpParam(params);
-            return this._public("/trades.json", params, callback);
         },
 
         getMyTrades: function(asset, currency, limit, timestamp, from, to, orderby, callback) {

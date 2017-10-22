@@ -153,9 +153,9 @@ Trader.prototype.getOrder = function(order_id, callback) {
       });
     }
 
-    var price = parseFloat( order.price );
-    var amount = Math.abs(parseFloat( order.volume ));
-    var date = moment( order.created_at );
+    var price = parseFloat(order.price);
+    var amount = Math.abs(parseFloat(order.volume));
+    var date = moment(order.created_at);
 
     callback(err, {price, amount, date});
   }.bind(this);
@@ -179,7 +179,6 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
       log.error('unable to cancel order', order, '(', err, result, ')');
       return this.retry(this.cancelOrder, args);
     }
-
     callback();
   }.bind(this);
 
@@ -194,13 +193,12 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
     var result = _.map(trades, t => {
       return {
-        date: t.created_at,
-        tid: +t.id,
+        date: moment(t.created_at).format('X'), // format with second unix
+        tid:  +t.id,
         price: +t.price,
-        amount: +t.origin_volume
+        amount: +t.volume
       }
-    })
-
+    });
     callback(null, result.reverse());
   }.bind(this);
 
@@ -221,7 +219,7 @@ Trader.getCapabilities = function () {
     ],
     requires: ['key', 'secret', 'username'],
     fetchTimespan: 60,
-    tid: 'id',
+    tid: 'tid', // id havd already converted to tid
     tradable: true
   };
 }
