@@ -204,7 +204,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
     callback(null, result.reverse());
   }.bind(this);
 
-  this.coinx.getMyTrades(this.asset, this.currency, null, null, null, null, null, process);
+  this.coinx.getRecentTrades(this.asset, this.currency, null, null, null, null, null, process);
 }
 
 Trader.getCapabilities = function () {
