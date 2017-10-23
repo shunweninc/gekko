@@ -64,7 +64,7 @@ Trader.prototype.getPortfolio = function(callback) {
 }
 
 Trader.prototype.getTicker = function(callback) {
-  this.coinx.ticker(this.asset, this.currency, callback);
+  this.coinx.getTicker(this.asset, this.currency, callback);
 }
 
 Trader.prototype.getFee = function(callback) {
@@ -140,7 +140,7 @@ Trader.prototype.getOrder = function(order_id, callback) {
       return this.retry(this.getOrder, args);
     }
 
-    var order = _.find(data, o => o.uid === +order_id);
+    var order = _.find(data, o => o.id === +order_id);
 
     if(!order) {
       // if the order was cancelled we are unable
@@ -165,7 +165,7 @@ Trader.prototype.getOrder = function(order_id, callback) {
 
 Trader.prototype.checkOrder = function(order_id, callback) {
   var check = function(err, result) {
-    var stillThere = _.find(result, function(o) { return o.id === order });
+    var stillThere = _.find(result, function(o) { return o.id === order_id });
     callback(err, !stillThere);
   }.bind(this);
 
@@ -176,7 +176,7 @@ Trader.prototype.cancelOrder = function(order_id, callback) {
   var args = _.toArray(arguments);
   var cancel = function(err, result) {
     if(err || !result) {
-      log.error('unable to cancel order', order, '(', err, result, ')');
+      log.error('unable to cancel order', order_id, '(', err, result, ')');
       return this.retry(this.cancelOrder, args);
     }
     callback();
