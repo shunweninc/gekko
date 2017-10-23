@@ -12,7 +12,7 @@ module.exports = (function() {
 
     // Constants
     var version  = '0.0.6',
-        API_URL  = 'http://peatio.dev:4000/api/v2',
+        API_URL  = 'https://x.tth365.com:443/api/v2',
         HASH_URL = '/api/v2',
         USER_AGENT = 'coinx.js ' + version;
     var errorMsg = "Missing Params";

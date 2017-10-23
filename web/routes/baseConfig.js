@@ -89,8 +89,4 @@ config.importer = {
   }
 }
 
-config.trader = {
-  enabled: true
-}
-
 module.exports = config;
